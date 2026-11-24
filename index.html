@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" data-skin="void">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Axjd | Asjad Farhan</title>
+<meta name="description" content="Axjd is the personal site of Asjad Farhan: his works, and Pablo, an AI assistant who talks, checks suspicious links, opens them safely and builds websites.">
+<meta name="theme-color" content="#05060B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2305060B'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%2319E3FF' stroke-width='3'/%3E%3Ctext x='32' y='42' font-size='28' font-weight='700' text-anchor='middle' fill='%2319E3FF' font-family='sans-serif'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@300..800&family=Albert+Sans:wght@300..700&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Oxanium:wght@400..800&family=Share+Tech+Mono&family=Unbounded:wght@400..800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="bg-void"><i class="floor"></i><i class="beam"></i></div>
+  <div class="bg-aurora"><i class="r1"></i><i class="r2"></i><i class="r3"></i></div>
+  <div class="bg-kasavu"></div>
+  <canvas id="fx"></canvas>
+  <div class="grain"></div>
+</div>
+<div class="cglow" id="cglow" aria-hidden="true"></div>
+<div class="cring" id="cring" aria-hidden="true"></div>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#home" aria-label="Axjd, back to the top">
+    <svg class="mark" viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".55"/>
+      <circle class="mark-orbit" cx="24" cy="3" r="2.8" fill="var(--a1)"/>
+      <text x="24" y="31.5" text-anchor="middle" font-size="22" font-weight="700" fill="currentColor" font-family="'Oxanium','Albert Sans',sans-serif">A</text>
+    </svg>
+    <span class="brand-t">Axjd</span>
+  </a>
+  <nav class="links" id="links" aria-label="Main menu">
+    <a href="#works">Works</a>
+    <a href="#about">About</a>
+    <a href="#pablo">Pablo</a>
+    <a href="#guard">Link Guard</a>
+    <a href="#studio">Studio</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <button class="own-chip" id="ownChip" hidden aria-label="Owner is logged in. Open admin"><i class="dot"></i>Owner</button>
+  <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false"><i></i><i></i></button>
+</header>
+<div class="menu" id="menu" aria-hidden="true"></div>
+
+<main id="main">
+
+  <section class="hero" id="home">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <h1 class="h-name" id="hName" aria-label="Axjd"></h1>
+        <p class="h-full" id="hFull"></p>
+        <p class="h-role"><span id="role"></span><i class="caret"></i></p>
+        <p class="h-tag" id="hTag"></p>
+        <div class="cta">
+          <button class="btn btn-main" data-magnetic data-go="pablo">Talk to Pablo</button>
+          <a class="btn btn-ghost" data-magnetic href="#works">See the works</a>
+        </div>
+        <div class="hud" id="hud">
+          <span><i class="dot"></i>Pablo online</span>
+          <span id="clock" class="mono">--:--:--</span>
+          <span id="hudWorks"></span>
+        </div>
+      </div>
+      <div class="hero-orb">
+        <div class="orb-wrap" id="orbWrap">
+          <svg class="halo" viewBox="-100 -100 200 200" aria-hidden="true">
+            <g class="spin g-void">
+              <circle r="97" fill="none" stroke="var(--a1)" stroke-opacity=".4" stroke-dasharray="1.5 6"/>
+              <circle r="90" fill="none" stroke="var(--a2)" stroke-opacity=".55" stroke-width=".6"/>
+              <path d="M-97 0h-3M97 0h3M0-97v-3M0 97v3" stroke="var(--a1)" stroke-width="1.2"/>
+            </g>
+            <g class="spin2 g-aur">
+              <circle r="95" fill="none" stroke="var(--a1)" stroke-opacity=".3" stroke-width=".6"/>
+              <ellipse rx="95" ry="34" fill="none" stroke="var(--a2)" stroke-opacity=".4" stroke-width=".6" transform="rotate(-24)"/>
+              <circle cx="95" cy="0" r="2.2" fill="var(--a3)"/>
+            </g>
+            <g class="spin g-kas">
+              <circle r="97" fill="none" stroke="var(--a1)" stroke-opacity=".7" stroke-width=".7"/>
+              <circle r="92" fill="none" stroke="var(--a1)" stroke-opacity=".35" stroke-width=".5"/>
+              <circle r="86" fill="none" stroke="var(--a1)" stroke-opacity=".55" stroke-width="4" stroke-dasharray=".7 8.5"/>
+            </g>
+          </svg>
+          <canvas id="orbHero" role="img" aria-label="Pablo: a sphere made of drifting letters"></canvas>
+          <ul class="orb-chips" aria-label="What Pablo can do">
+            <li class="c1">Talks with you</li>
+            <li class="c2">Answers in writing</li>
+            <li class="c3">Checks links</li>
+            <li class="c4">Builds websites</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="marq" aria-hidden="true"><div class="track" id="track"></div></div>
+  </section>
+
+  <section class="sec" id="works">
+    <div class="wrap">
+      <header class="sec-h">
+        <h2>Works</h2>
+        <p id="worksSub"></p>
+      </header>
+      <div class="bento" id="bento"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="about">
+    <div class="wrap">
+      <header class="sec-h"><h2>About</h2></header>
+      <div class="about" id="aboutBox"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="pablo">
+    <div class="wrap">
+      <header class="sec-h">
+        <h2>Pablo</h2>
+        <p>The assistant who lives on this site. Talk or type. Paste a suspicious link and Pablo checks it before anything opens. Describe a website and Pablo builds it and hands you the link.</p>
+      </header>
+      <div class="pcard card" id="pcard" data-mode="voice" data-state="idle">
+        <div class="p-bar">
+          <div class="p-state"><i class="dot"></i><span id="pState">Ready</span></div>
+          <div class="seg" role="tablist" aria-label="How to talk to Pablo">
+            <button role="tab" aria-selected="true" data-mode="voice">Voice</button>
+            <button role="tab" aria-selected="false" data-mode="text">Text</button>
+          </div>
+        </div>
+        <div class="p-voice" id="pVoice">
+          <div class="v-orb"><canvas id="orbVoice" aria-hidden="true"></canvas></div>
+          <p class="v-status" id="vStatus" aria-live="polite">Tap the mic and start talking</p>
+          <p class="v-text" id="vText"></p>
+          <div class="v-ctl">
+            <button class="mic" id="mic" aria-label="Start talking">
+              <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+            </button>
+            <button class="btn btn-ghost sm" id="langBtn" aria-label="Change the voice language">English</button>
+          </div>
+        </div>
+        <div class="p-text" id="pText">
+          <div class="log" id="chatlog" aria-live="polite"></div>
+          <div class="sugg" id="sugg"></div>
+          <form class="composer" id="composer" autocomplete="off">
+            <label class="sr" for="chatIn">Message</label>
+            <input id="chatIn" placeholder="Ask Pablo, or paste a link" maxlength="600">
+            <button type="button" class="tts" id="ttsBtn" aria-label="Read replies aloud: off" aria-pressed="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a8 8 0 0 1 0 11"/></svg></button>
+            <button class="send" aria-label="Send"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="guard">
+    <div class="wrap">
+      <header class="sec-h">
+        <h2>Link Guard</h2>
+        <p>Paste a link you do not trust. Pablo looks at it on a safe server, never on your device, and gives you a plain report. The owner can then open it in the Safe Window, a small remote browser where nothing can reach your device.</p>
+      </header>
+      <div class="gcard card">
+        <form class="g-in" id="gform" autocomplete="off">
+          <label class="sr" for="gUrl">Link to check</label>
+          <input id="gUrl" inputmode="url" spellcheck="false" autocapitalize="off" placeholder="https://">
+          <button class="btn btn-main" id="gGo">Check link</button>
+        </form>
+        <label class="g-auto owner-only"><input type="checkbox" id="gAuto"><span>After a check, open the page in the Safe Window (unless it is dangerous)</span></label>
+        <div class="g-stage" id="gStage" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="studio">
+    <div class="wrap">
+      <header class="sec-h">
+        <h2>Studio</h2>
+        <p>Describe a website in your own words. Pablo designs it, publishes it and hands you the link. Prefer to build it yourself? Ask for step-by-step instructions instead.</p>
+      </header>
+      <div class="stcard card">
+        <div class="st-lock">
+          <span class="st-lock-ic" data-ic="lock"></span>
+          <h3>Owner tool</h3>
+          <p class="muted">Studio spends the owner’s free AI and publishing quota, so it opens with the owner password. You can still ask Pablo about websites in the chat above.</p>
+          <button class="btn btn-main" data-st="login">Log in</button>
+        </div>
+        <div class="st-app">
+          <div class="st-form">
+            <label class="fld"><span>What should the website be about?</span>
+              <textarea class="in" id="stBrief" rows="4" maxlength="2000" placeholder="For example: a one-page site for my home bakery in Kozhikode. Warm and playful, with a menu and a WhatsApp order button."></textarea></label>
+            <div class="st-row"><span class="muted">Try an idea</span><div class="chips" id="stEx"></div></div>
+            <div class="st-row"><span class="muted">Style</span><div class="chips" id="stChips" role="group" aria-label="Style"></div></div>
+            <label class="swrow"><span>Publish it and give me the link</span><input type="checkbox" class="swi" id="stAuto" checked><i class="sw"></i></label>
+            <div class="btns">
+              <button class="btn btn-main" id="stBuild">Build my website</button>
+              <button class="btn btn-ghost" id="stGuideBtn">Write instructions instead</button>
+            </div>
+          </div>
+          <div class="st-prog" id="stProg" hidden aria-live="polite"></div>
+          <div class="st-out" id="stOut" hidden>
+            <div class="st-top">
+              <div><h3 id="stTitle"></h3><span class="st-chip" id="stStatus"></span></div>
+              <div class="st-actions" id="stActions"></div>
+            </div>
+            <div class="st-link" id="stLinkRow"></div>
+            <div class="st-view" role="group" aria-label="Preview size">
+              <button type="button" class="chip" data-view="phone" aria-pressed="true">Phone</button>
+              <button type="button" class="chip" data-view="desktop" aria-pressed="false">Desktop</button>
+            </div>
+            <div class="st-dev phone" id="stDev"><iframe id="stFrame" title="Preview of the website" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe></div>
+            <form class="st-refine" id="stRefine" autocomplete="off">
+              <label class="sr" for="stChange">Ask for a change</label>
+              <input class="in" id="stChange" placeholder="Ask for a change, e.g. make the heading bigger and the colours warmer" maxlength="600">
+              <button class="btn btn-main">Apply</button>
+            </form>
+          </div>
+          <div class="st-guide" id="stGuide" hidden>
+            <div class="st-top"><h3>Your step-by-step guide</h3><div class="st-actions"><button class="btn btn-ghost sm" data-st="copy-guide">Copy guide</button></div></div>
+            <div class="md" id="stGuideBody"></div>
+          </div>
+          <div class="st-recent" id="stRecent" hidden>
+            <h4>Recent builds</h4>
+            <div class="lst" id="stList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot" id="contact">
+  <div class="wrap">
+    <h2 class="foot-h">Get in touch</h2>
+    <div class="contact" id="contactBox"></div>
+    <div class="foot-bar">
+      <span>© <span id="yr"></span> Axjd · Asjad Farhan</span>
+      <button class="adm-open" id="admBtn" aria-label="Owner login and admin"><span data-ic="lock"></span></button>
+    </div>
+  </div>
+</footer>
+
+<div class="lock" id="lock" hidden>
+  <div class="lock-in">
+    <svg class="lock-ic" viewBox="0 0 64 64" width="76" height="76" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="14" y="28" width="36" height="26" rx="4"/><path d="M22 28V21a10 10 0 0 1 20 0v7"/><circle cx="32" cy="41" r="3" fill="currentColor"/></svg>
+    <h2>Closed for now</h2>
+    <p id="lockMsg"></p>
+    <button class="btn btn-ghost sm" id="lockAdm">Admin</button>
+  </div>
+</div>
+
+<div class="swin" id="swin" hidden role="dialog" aria-label="Safe Window">
+  <div class="swin-bar" id="swinBar">
+    <span class="swin-ic" data-ic="shield" aria-hidden="true"></span>
+    <span class="swin-t"><b>Safe Window</b><span class="swin-url mono" id="swinUrl"></span></span>
+    <span class="swin-time mono" id="swinTime" title="Time left"></span>
+    <span class="swin-btns">
+      <button class="ib" data-sw="back" aria-label="Back"></button>
+      <button class="ib" data-sw="fwd" aria-label="Forward"></button>
+      <button class="ib" data-sw="reload" aria-label="Reload"></button>
+      <button class="ib" data-sw="min" aria-label="Minimise"></button>
+      <button class="ib" data-sw="max" aria-label="Make bigger"></button>
+      <button class="ib bad" data-sw="close" aria-label="Close and end the session"></button>
+    </span>
+  </div>
+  <div class="swin-stage" id="swinStage"></div>
+  <p class="swin-foot" id="swinFoot"></p>
+</div>
+
+<div class="own" id="own" hidden>
+  <form class="own-card card" id="ownForm" role="dialog" aria-modal="true" aria-labelledby="ownT">
+    <button type="button" class="ib own-x" data-own="close" aria-label="Close" data-ic="x"></button>
+    <h3 id="ownT">Owner login</h3>
+    <p class="muted" id="ownMsg"></p>
+    <label class="fld"><span>Password</span><input class="in" id="ownPw" type="password" autocomplete="current-password" required></label>
+    <p class="muted" id="ownDemo" hidden>Preview password: <code>demo</code></p>
+    <div class="btns"><button class="btn btn-main" id="ownGo">Log in</button><button type="button" class="btn btn-ghost" data-own="close">Not now</button></div>
+  </form>
+</div>
+
+<div class="adm" id="admin" hidden></div>
+<div id="toasts" aria-live="polite"></div>
+
+<noscript><p style="padding:24px;color:#fff">Please turn on JavaScript to see this site.</p></noscript>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
