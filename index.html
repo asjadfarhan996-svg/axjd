@@ -189,6 +189,9 @@
           <div class="st-form">
             <label class="fld"><span>What should the website be about?</span>
               <textarea class="in" id="stBrief" rows="4" maxlength="2000" placeholder="For example: a one-page site for my home bakery in Kozhikode. Warm and playful, with a menu and a WhatsApp order button."></textarea></label>
+            <div class="st-row"><span class="muted">Copy a look (optional)</span>
+              <div class="st-ref"><label class="btn btn-ghost sm" for="stImg">Add a screenshot</label><input type="file" id="stImg" accept="image/*" hidden><span class="muted" id="stImgName"></span><button type="button" class="btn btn-ghost sm" id="stImgX" hidden>Remove</button></div>
+              <input class="in" id="stRef" type="url" inputmode="url" placeholder="Or paste a link to a site you like as the example"></div>
             <div class="st-row"><span class="muted">Try an idea</span><div class="chips" id="stEx"></div></div>
             <div class="st-row"><span class="muted">Style</span><div class="chips" id="stChips" role="group" aria-label="Style"></div></div>
             <label class="swrow"><span>Publish it and give me the link</span><input type="checkbox" class="swi" id="stAuto" checked><i class="sw"></i></label>

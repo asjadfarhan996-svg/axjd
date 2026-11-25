@@ -83,7 +83,7 @@ let S={profile:{},theme:{name:'void'},sites:[],locked:false,lockMsg:'',features:
 let TOKEN='';
 try{const t=JSON.parse(store.get('axjd_t')||'null');if(t&&t.exp>Date.now())TOKEN=t.v;else store.del('axjd_t');}catch(e){}
 const COL={a1rgb:'25,227,255',a2rgb:'138,107,255'};
-const ADM={tab:'works',A:null,edit:null,theme:null,vq:'',vault:{key:null,items:[],show:{},timer:0,edit:null}};
+const ADM={dz:{brief:'',img:'',name:'',msg:'',cls:''},tab:'works',A:null,edit:null,theme:null,vq:'',vault:{key:null,items:[],show:{},timer:0,edit:null}};
 function setToken(v){
   TOKEN=v||'';
   if(TOKEN)store.set('axjd_t',JSON.stringify({v:TOKEN,exp:Date.now()+5.5*3600*1000}));else store.del('axjd_t');
@@ -104,6 +104,41 @@ async function api(action,body={}){
 async function loadPublic(){
   if(DEMO){demoLoad();return D.locked?{locked:true,message:D.lockMsg,theme:D.theme}:{locked:false,profile:D.profile,theme:D.theme,sites:sortSites(D.sites),features:D.features};}
   try{const r=await fetch(API_URL+'?t='+Date.now());return await r.json();}catch(e){return{error:'connect'};}
+}
+
+/* ═══════════════ reference pictures and custom look ═══════════════ */
+function readImage(file){
+  return new Promise((res,rej)=>{
+    if(!file||!/^image\//.test(file.type)){rej(new Error('Please choose a picture file.'));return;}
+    const fr=new FileReader();
+    fr.onerror=()=>rej(new Error('Could not read that picture.'));
+    fr.onload=()=>{
+      const im=new Image();
+      im.onerror=()=>rej(new Error('Could not open that picture.'));
+      im.onload=()=>{
+        const k=Math.min(1,1100/Math.max(im.width,im.height)),w=Math.max(1,Math.round(im.width*k)),h=Math.max(1,Math.round(im.height*k));
+        const c=document.createElement('canvas');c.width=w;c.height=h;
+        const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+        res(c.toDataURL('image/jpeg',.82));
+      };
+      im.src=fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+function cleanCssFront(c){
+  c=String(c||'').slice(0,14000).replace(/<|>/g,' ');
+  c=c.replace(/@import\s+url\(\s*['"]?(https:\/\/fonts\.googleapis\.com\/[^'")\s]+)['"]?\s*\)\s*;?/gi,'/*FONT:$1*/');
+  c=c.replace(/@import[^;]*;?/gi,'').replace(/javascript:/gi,'');
+  c=c.replace(/url\(\s*(['"]?)(?!data:image\/(?:svg\+xml|png|jpeg|webp)[;,])[^)]*\)/gi,'none');
+  return c.replace(/\/\*FONT:([^*]+)\*\//g,'@import url("$1");').trim();
+}
+function applyCustomCss(css){
+  let st=document.getElementById('customCss');
+  css=cleanCssFront(css);
+  if(!css){if(st)st.remove();return;}
+  if(!st){st=document.createElement('style');st.id='customCss';document.head.appendChild(st);}
+  st.textContent=css;
 }
 
 /* ═══════════════ preview data (only used while API_URL is empty) ═══════════════ */
@@ -216,6 +251,10 @@ async function demoApi(a,b){
     case'saveSite':{const s=b.site;if(!s.id)s.id='s'+Date.now().toString(36);const i=D.sites.findIndex(x=>x.id===s.id);if(i<0)D.sites.push(s);else D.sites[i]=s;demoSave();return{ok:true};}
     case'deleteSite':D.sites=D.sites.filter(x=>x.id!==b.id);demoSave();return{ok:true};
     case'saveProfile':D.profile=b.profile;demoSave();return{ok:true};
+    case'designSite':{
+      if(String(b.brief||'').trim().length<4&&!b.image)return{error:'Describe the look you want, or add a picture.'};
+      return{ok:true,css:'html[data-skin]{color-scheme:light;--bg:#F6F1E7;--ink:#1F2A22;--mute:#5E6B60;--a1:#1F7A4D;--a1-rgb:31,122,77;--a2:#C9822B;--a3:#E4572E;--line:rgba(31,42,34,.18);--line-hi:rgba(31,122,77,.7);--card:rgba(255,255,255,.75);--card-hi:#fff;--on-a:#fff;--r:20px;--r-btn:999px;--cut:0px;--blur:0px;--clip:none}html[data-skin] .bg{display:none}html[data-skin] body{background:var(--bg)}html[data-skin] .h-name{-webkit-text-fill-color:currentColor;background:none;color:var(--a1)}'};
+    }
     case'saveTheme':D.theme=b.theme;demoSave();return{ok:true};
     case'setLock':D.locked=!!b.locked;D.lockMsg=b.message||'';demoSave();return{ok:true};
     case'vaultSave':{const it=b.item;if(!it.id)it.id='v'+Date.now().toString(36);const i=D.vault.findIndex(x=>x.id===it.id);if(i<0)D.vault.push(it);else D.vault[i]=it;demoSave();return{ok:true};}
@@ -402,7 +441,7 @@ function applyTheme(t){
   document.body.classList.toggle('no-fx',t.particles===false);
   document.body.classList.toggle('no-grain',t.grain===false);
   document.body.classList.toggle('no-cursor',t.cursor===false);
-  fx.skin=sk;
+  fx.skin=sk;applyCustomCss(t.css||'');
   const m=document.querySelector('meta[name=theme-color]');if(m)m.content=SKIN_BG[sk];
   refreshColors();
   $$('.demo [data-skin]').forEach(b=>b.classList.toggle('on',b.dataset.skin===sk));
@@ -1276,7 +1315,7 @@ async function waitLive(url,tick){
 }
 
 /* ── build / refine (shared by the Studio form and by Pablo's chat) ── */
-async function studioRun(kind,arg,{style='',auto=true,id,onStep=()=>{}}={}){
+async function studioRun(kind,arg,{style='',auto=true,id,extra={},onStep=()=>{}}={}){
   if(studio.busy)return{ok:false,error:'Another build is running. Please wait a moment.'};
   studio.busy=true;
   const wantPub=auto&&(DEMO||!!(S.features&&S.features.publish));
@@ -1287,7 +1326,7 @@ async function studioRun(kind,arg,{style='',auto=true,id,onStep=()=>{}}={}){
   const t1=setTimeout(()=>{if(i<1){i=1;onStep(list,1);}},kind==='build'?1800:1200);
   const t2=setTimeout(()=>{if(i<2){i=2;onStep(list,2);}},kind==='build'?6000:4500);
   let r;
-  try{r=await api(kind,kind==='build'?{brief:arg,style}:{id,instruction:arg});}catch(e){r={error:'Could not reach the server.'};}
+  try{r=await api(kind,kind==='build'?{brief:arg,style,...extra}:{id,instruction:arg});}catch(e){r={error:'Could not reach the server.'};}
   clearTimeout(t1);clearTimeout(t2);
   if(!r||r.error||!r.html){studio.busy=false;return{ok:false,refused:!!(r&&r.refused),error:(r&&r.error)||'No page came back. Please try again.'};}
   const prev=kind==='refine'?studio.cur:null;
@@ -1384,7 +1423,7 @@ async function studioBuildClick(){
   if(brief.length<8){toast('Describe the website in a little more detail','bad');return;}
   if(!await ensureOwner('Studio is an owner tool. Log in to continue.'))return;
   const prog=$('#stProg');$('#stBuild').disabled=true;$('#stGuideBtn').disabled=true;
-  const res=await studioRun('build',brief,{style:studio.style,auto:$('#stAuto').checked,onStep:(list,i)=>{prog.hidden=false;prog.innerHTML=stepsHTML(list,i);}});
+  const res=await studioRun('build',brief,{style:studio.style,auto:$('#stAuto').checked,extra:{image:studio.img||'',refUrl:($('#stRef').value||'').trim()},onStep:(list,i)=>{prog.hidden=false;prog.innerHTML=stepsHTML(list,i);}});
   $('#stBuild').disabled=false;$('#stGuideBtn').disabled=false;
   if(!res.ok){prog.hidden=false;prog.innerHTML=`<p class="g-err">${esc(res.error)}</p>`;return;}
   prog.hidden=true;
@@ -1457,6 +1496,12 @@ function studioInit(){
   $('#stEx').innerHTML=EXAMPLES.map((t,i)=>`<button type="button" class="chip ghost" data-ex="${i}">${esc(t)}</button>`).join('');
   $('#studio').addEventListener('click',studioClick);
   $('#stBuild').addEventListener('click',studioBuildClick);
+  $('#stImg').addEventListener('change',async e=>{
+    const f=e.target.files&&e.target.files[0];if(!f)return;
+    try{studio.img=await readImage(f);$('#stImgName').textContent=f.name;$('#stImgX').hidden=false;}
+    catch(er){toast(er.message,'bad');}e.target.value='';
+  });
+  $('#stImgX').addEventListener('click',()=>{studio.img='';$('#stImgName').textContent='';$('#stImgX').hidden=true;});
   $('#stGuideBtn').addEventListener('click',studioGuideClick);
   $('#stRefine').addEventListener('submit',studioRefineSubmit);
 }
@@ -1559,7 +1604,7 @@ function tabProfile(){
     <div class="row2">${inp('whatsapp','WhatsApp number (with country code)','91...')}${inp('email','Email')}</div>
     ${inp('photo','Photo link','https://...')}
     <label class="fld"><span>Other details (one per line, as “Title: detail”)</span><textarea class="in" name="extra" rows="3">${v('extra')}</textarea></label>
-    <div class="btns"><button class="btn btn-main">Save</button></div></form>`;
+<div class="btns"><button class="btn btn-main">Save</button></div></form>`;
 }
 function vItem(i){
   const sh=ADM.vault.show[i.id],id=esc(i.id);
@@ -1603,6 +1648,12 @@ function tabDesign(){
     <div class="skins">${SKINS.map(k=>`<button type="button" class="skin ${t.name===k?'on':''}" data-act="skin" data-skin="${k}"><span class="pv pv-${k}"></span><span class="sk-t"><b>${SKIN_NAME[k]}</b><small>${SKIN_NOTE[k]}</small></span></button>`).join('')}</div>
     <label class="fld"><span>Change the main colour (optional)</span><span class="accent-row"><input type="color" id="accent" value="${esc(/^#[0-9a-f]{6}$/i.test(t.accent||'')?t.accent:'#'+parseHex(getC('--a1')).map(v=>v.toString(16).padStart(2,'0')).join(''))}"><button type="button" class="btn btn-ghost sm" data-act="accent-reset">Use the design's own colour</button></span></label>
     <div>${sw('particles','Drifting particles in the background')}${sw('grain','Fine grain texture')}${sw('cursor','Glow that follows the mouse')}</div>
+        <h3>Redesign the whole site</h3>
+    <p class="muted">Describe the look you want, or add a screenshot you like. Pablo restyles every part of the site. You see it live, then keep it or remove it.</p>
+    <textarea class="in" id="dzBrief" rows="3" maxlength="1500" placeholder="For example: a bright, clean look in cream and deep green, rounded cards, a friendly serif for headings.">${esc(ADM.dz.brief)}</textarea>
+    <div class="st-ref"><label class="btn btn-ghost sm" for="dzImg">Add a screenshot</label><input type="file" id="dzImg" accept="image/*" hidden><span class="muted" id="dzImgName">${esc(ADM.dz.name)}</span></div>
+    <div class="btns"><button type="button" class="btn btn-ghost" data-act="dz-go">Redesign</button>${t.css?'<button type="button" class="btn btn-ghost" data-act="dz-clear">Remove custom look</button>':''}</div>
+    <p class="cn-res ${ADM.dz.cls}" id="dzMsg">${esc(ADM.dz.msg)}</p>
     <div class="btns"><button class="btn btn-main">Save</button></div></form>`;
 }
 
@@ -1724,6 +1775,16 @@ async function onAdmClick(e){
       case'v-copy':{const it=ADM.vault.items.find(i=>i.id===id);if(it){await copyText(it[b.dataset.f]||'');toast('Copied');}break;}
       case'v-del':if(!sure(b,IC.trash))break;await api('vaultDelete',{id});await vaultReload();toast('Deleted');renderAdmBody();break;
       case'skin':ADM.theme.name=b.dataset.skin;applyTheme(ADM.theme);renderAdmBody();break;
+      case'dz-go':{
+        ADM.dz.brief=($('#dzBrief').value||'').trim();
+        if(ADM.dz.brief.length<4&&!ADM.dz.img){toast('Describe the look, or add a picture','bad');break;}
+        b.disabled=true;const m=$('#dzMsg');m.className='cn-res busy';m.textContent='Designing. This can take up to a minute.';
+        const r=await api('designSite',{brief:ADM.dz.brief,image:ADM.dz.img||''});
+        b.disabled=false;
+        if(r.error||!r.ok){ADM.dz.cls='bad';ADM.dz.msg=r.error||'Could not design that.';renderAdmBody();break;}
+        ADM.theme.css=r.css;applyTheme(ADM.theme);ADM.dz.cls='ok';ADM.dz.msg='Done. This is a live preview. Press Save to keep it.';renderAdmBody();break;
+      }
+      case'dz-clear':ADM.theme.css='';applyTheme(ADM.theme);ADM.dz.msg='Custom look removed. Press Save to keep that.';ADM.dz.cls='';renderAdmBody();break;
       case'accent-reset':ADM.theme.accent='';applyTheme(ADM.theme);renderAdmBody();break;
       case'conn-test':await connTest(b);break;
       case'conn-clear':{
@@ -1798,6 +1859,7 @@ async function onAdmSubmit(e){
 }
 function onAdmInput(e){
   const t=e.target;vaultTouch();
+  if(t.id==='dzBrief'){ADM.dz.brief=t.value;return;}
   if(t.id==='vq'){ADM.vq=t.value;refreshVList();}
   else if(t.id==='accent'){ADM.theme.accent=t.value;applyTheme(ADM.theme);}
   else if(t.classList&&t.classList.contains('swi')&&t.closest('#f-design')){ADM.theme[t.name]=t.checked;applyTheme(ADM.theme);}
@@ -1871,6 +1933,11 @@ function bindUI(){
   $('#own').addEventListener('click',e=>{if(e.target.id==='own'||e.target.closest('[data-own=close]'))ownClose(false);});
   const a=$('#admin');
   a.addEventListener('click',onAdmClick);a.addEventListener('submit',onAdmSubmit);a.addEventListener('input',onAdmInput);
+  a.addEventListener('change',async e=>{
+    const t=e.target;if(t.id!=='dzImg')return;
+    const f=t.files&&t.files[0];if(!f)return;
+    try{ADM.dz.img=await readImage(f);ADM.dz.name=f.name;$('#dzImgName').textContent=f.name;}catch(er){toast(er.message,'bad');}
+  });
   /* safe window */
   $('#swin').addEventListener('click',swClick);swDragInit();
   addEventListener('keydown',e=>{

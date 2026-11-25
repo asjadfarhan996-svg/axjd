@@ -670,3 +670,8 @@ body:not(.is-owner) .st-app{display:none}
   .cn-h{flex-wrap:wrap}
   .cn-h>div{flex:1 1 200px}
 }
+
+/* reference picture rows */
+.st-ref{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.st-ref+.in{margin-top:8px}
+.cn-res.busy{color:var(--a1)}
