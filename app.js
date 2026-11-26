@@ -246,8 +246,8 @@ async function demoApi(a,b){
   await wait(a==='check'?2800:a==='chat'?900:a==='build'?3600:a==='guide'?1900:a==='refine'?2200:a==='publish'?1300:a==='safeOpen'?900:220);
   const strip=x=>{const{html,...r}=x;return r;};
   switch(a){
-    case'login':return b.password==='demo'?{ok:true,token:'demo',usingStarterPassword:false}:{error:'Wrong password'};
-    case'adminAll':return{sites:sortSites(D.sites),profile:D.profile,theme:D.theme,locked:D.locked,lockMsg:D.lockMsg,vault:D.vault,builds:D.builds.map(strip).reverse(),keys:D.keys,features:D.features,usingStarterPassword:false};
+    case'login':return(b.password==='demo'&&String(b.username||'').trim().toLowerCase()===(D.username||'asjad'))?{ok:true,token:'demo',usingStarterPassword:false}:{error:'Wrong username or password'};
+    case'adminAll':return{sites:sortSites(D.sites),profile:D.profile,theme:D.theme,locked:D.locked,lockMsg:D.lockMsg,vault:D.vault,builds:D.builds.map(strip).reverse(),keys:D.keys,features:D.features,usingStarterPassword:false,username:D.username||'asjad'};
     case'saveSite':{const s=b.site;if(!s.id)s.id='s'+Date.now().toString(36);const i=D.sites.findIndex(x=>x.id===s.id);if(i<0)D.sites.push(s);else D.sites[i]=s;demoSave();return{ok:true};}
     case'deleteSite':D.sites=D.sites.filter(x=>x.id!==b.id);demoSave();return{ok:true};
     case'saveProfile':D.profile=b.profile;demoSave();return{ok:true};
@@ -259,7 +259,7 @@ async function demoApi(a,b){
     case'setLock':D.locked=!!b.locked;D.lockMsg=b.message||'';demoSave();return{ok:true};
     case'vaultSave':{const it=b.item;if(!it.id)it.id='v'+Date.now().toString(36);const i=D.vault.findIndex(x=>x.id===it.id);if(i<0)D.vault.push(it);else D.vault[i]=it;demoSave();return{ok:true};}
     case'vaultDelete':D.vault=D.vault.filter(x=>x.id!==b.id);demoSave();return{ok:true};
-    case'changePassword':return{ok:true};
+    case'changePassword':{if(b.newUsername){D.username=String(b.newUsername).toLowerCase();demoSave();}return{ok:true,username:D.username||'asjad'};}
     case'saveKeys':{(b.clear||[]).forEach(k=>{delete D.keys[k];});Object.entries(b.keys||{}).forEach(([k,v])=>{if(!String(v).trim())return;D.keys[k]=['GITHUB_REPO','GITHUB_BRANCH','GEMINI_CHAT_MODEL','GEMINI_BUILD_MODEL','HB_REGION','HB_MAX_MINUTES'].includes(k)?String(v):true;});demoSave();return{ok:true,keys:D.keys,features:D.features};}
     case'testKey':return{ok:true,note:'Preview only: nothing is really connected here.'};
     case'chat':{const m=(b.messages||[]).filter(x=>x.role==='user').pop();return{reply:demoReply(m?m.text:'')};}
@@ -946,7 +946,7 @@ function ensureOwner(msg){
     $('#ownMsg').textContent=msg||'This is an owner tool. Log in to continue.';
     $('#ownDemo').hidden=!DEMO;
     $('#own').hidden=false;document.body.classList.add('own-open');
-    const i=$('#ownPw');i.value=DEMO?'demo':'';setTimeout(()=>{i.focus();i.select();},60);
+    const i=$('#ownPw'),u=$('#ownUn');i.value=DEMO?'demo':'';u.value=DEMO?'asjad':u.value;setTimeout(()=>{(u.value?i:u).focus();},60);
   });
 }
 function ownClose(ok){
@@ -955,11 +955,11 @@ function ownClose(ok){
 }
 async function ownSubmit(e){
   e.preventDefault();const b=$('#ownGo');b.disabled=true;
-  const r=await api('login',{password:$('#ownPw').value});
+  const r=await api('login',{username:$('#ownUn').value,password:$('#ownPw').value});
   b.disabled=false;
   if(!r||!r.token){toast((r&&r.error)||'Could not log in','bad');return;}
   setToken(r.token);
-  if(r.usingStarterPassword)toast('You are still on the starter password. Change it in Admin, under Lock.','warn');
+  if(r.usingStarterPassword)toast('You are still on the starter login. Change it in Admin, under Lock.','warn');
   ownClose(true);
 }
 
@@ -1564,8 +1564,8 @@ function renderAdm(){
   const a=$('#admin');
   if(!TOKEN||!ADM.A){
     a.innerHTML=`<div class="adm-card card"><div class="adm-head"><b>Admin</b><div class="adm-hb"><button class="ib" data-act="close" aria-label="Close">${IC.x}</button></div></div>
-      <form class="login" id="f-login"><h3>Owner login</h3><label class="fld"><span>Password</span><input class="in" type="password" name="pw" autocomplete="current-password" required value="${DEMO?'demo':''}"></label>
-      ${DEMO?'<p class="muted">Preview password: <code>demo</code></p>':'<p class="muted">First time? The starter password is in the setup steps Pablo gave you. You will be asked to change it.</p>'}<div class="btns"><button class="btn btn-main">Log in</button></div></form></div>`;
+      <form class="login" id="f-login"><h3>Owner login</h3><label class="fld"><span>Username</span><input class="in" name="un" autocomplete="username" autocapitalize="none" required value="${DEMO?'asjad':''}"></label><label class="fld"><span>Password</span><input class="in" type="password" name="pw" autocomplete="current-password" required value="${DEMO?'demo':''}"></label>
+      ${DEMO?'<p class="muted">Preview login: <code>asjad</code> / <code>demo</code></p>':'<p class="muted">First time? The starter username is <code>asjad</code> and the starter password is in the setup steps Pablo gave you. Change both after you log in.</p>'}<div class="btns"><button class="btn btn-main">Log in</button></div></form></div>`;
     setTimeout(()=>{const i=a.querySelector('input');if(i)i.focus();},60);return;
   }
   a.innerHTML=`<div class="adm-card card" role="dialog" aria-modal="true" aria-label="Admin"><div class="adm-head"><b>Admin</b><div class="adm-hb"><button class="ib" data-act="logout" aria-label="Log out">${IC.out}</button><button class="ib" data-act="close" aria-label="Close">${IC.x}</button></div></div><nav class="adm-tabs" id="admTabs"></nav><div class="adm-body" id="admBody"></div></div>`;
@@ -1737,9 +1737,11 @@ function tabLock(){
     <label class="swrow"><span>The site is locked right now</span><input type="checkbox" class="swi" name="locked" ${A.locked?'checked':''}><i class="sw"></i></label>
     <label class="fld"><span>Message visitors will see</span><textarea class="in" name="message" rows="3">${esc(A.lockMsg||'')}</textarea></label>
     <div class="btns"><button class="btn btn-main">Save</button></div></form>
-    <form class="form" id="f-pw"><h3>Change the admin password</h3>
-    <label class="fld"><span>New password (at least 6 characters)</span><input class="in" type="password" name="pw" minlength="6" required autocomplete="new-password"></label>
-    <div class="btns"><button class="btn btn-ghost">Change it</button></div></form>`;
+    <form class="form" id="f-pw"><h3>Change your login</h3>
+    <p class="muted">Your username right now: <b>${esc(A.username||'asjad')}</b>. Fill in only what you want to change.</p>
+    <label class="fld"><span>New username (3 to 30 letters or numbers)</span><input class="in" name="nu" autocomplete="off" autocapitalize="none"></label>
+    <label class="fld"><span>New password (at least 6 characters)</span><input class="in" type="password" name="pw" autocomplete="new-password"></label>
+    <div class="btns"><button class="btn btn-ghost">Save login</button></div></form>`;
 }
 function sure(b,restore){
   if(b.dataset.sure==='1')return true;
@@ -1816,7 +1818,7 @@ async function onAdmSubmit(e){
     }
     switch(fid){
       case'f-login':{
-        const r=await api('login',{password:fd.pw});
+        const r=await api('login',{username:fd.un,password:fd.pw});
         if(!r.token){toast(r.error||'Could not log in','bad');return;}
         setToken(r.token);
         if(r.usingStarterPassword)toast('You are on the starter password. Change it under Lock.','warn');
@@ -1851,8 +1853,8 @@ async function onAdmSubmit(e){
         toast(fd.locked?'Site locked':'Site unlocked');await admReload();break;
       }
       case'f-pw':{
-        const r=await api('changePassword',{newPassword:fd.pw});if(r.error)throw new Error(r.error);
-        toast('Password changed');f.reset();ADM.A.usingStarterPassword=false;renderAdmBody();break;
+        const r=await api('changePassword',{newPassword:fd.pw||'',newUsername:(fd.nu||'').trim()});if(r.error)throw new Error(r.error);
+        toast('Login saved');f.reset();if(fd.pw)ADM.A.usingStarterPassword=false;if(r.username)ADM.A.username=r.username;renderAdmBody();break;
       }
     }
   }catch(err){toast(String(err.message||err),'bad');}
