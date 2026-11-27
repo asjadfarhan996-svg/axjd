@@ -694,3 +694,6 @@ html[data-skin]{--card:rgba(255,255,255,.035);--card-hi:rgba(255,255,255,.06);--
 .card,.btn,.chip,.send,.t-go,.tile,.pab,.rbox,.li,.vi,.orb-chips li,.bub,.acard,.in,.composer input,.g-in input{
   -webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
 .btn:not(.primary):not(.pri){background-color:rgba(255,255,255,.03)}
+
+/* rings removed */
+.halo,.cring,.cglow{display:none!important}
