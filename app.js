@@ -2,8 +2,8 @@
 /* ═══════════════ settings ═══════════════ */
 const API_URL=String(window.AXJD_API||'').trim();   // set in config.js
 const DEMO=!API_URL;
-const SKINS=['void','aurora','kasavu'];
-const SKIN_NAME={void:'Neon',aurora:'Aurora',kasavu:'Kasavu'};
+const SKINS=['aurora'];
+const SKIN_NAME={aurora:'Aurora'};
 const SKIN_NOTE={void:'Black sky, neon light, grid floor',aurora:'Drifting polar light, glass surfaces',kasavu:'Gold kasavu borders, lamp-green glow'};
 const SKIN_BG={void:'#05060B',aurora:'#040B14',kasavu:'#080906'};
 const HB_SDK='https://unpkg.com/@hyperbeam/web@latest/dist/index.js';
@@ -79,7 +79,7 @@ function md(src){
 const plain=s=>String(s||'').replace(/```[\s\S]*?```/g,' ').replace(/[*_`#>]/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').replace(/\s+/g,' ').trim();
 
 /* ═══════════════ state ═══════════════ */
-let S={profile:{},theme:{name:'void'},sites:[],locked:false,lockMsg:'',features:{ai:false,safe:false,scan:false,publish:false}};
+let S={profile:{},theme:{name:'aurora'},sites:[],locked:false,lockMsg:'',features:{ai:false,safe:false,scan:false,publish:false}};
 let TOKEN='';
 try{const t=JSON.parse(store.get('axjd_t')||'null');if(t&&t.exp>Date.now())TOKEN=t.v;else store.del('axjd_t');}catch(e){}
 const COL={a1rgb:'25,227,255',a2rgb:'138,107,255'};
@@ -152,7 +152,7 @@ const SEED=()=>({
     bio:'This is my personal corner of the internet: the things I have built, who I am, and an assistant called Pablo who can chat, check suspicious links and even build websites.',
     orgs:'',location:'',phone:'+91 00000 00000',whatsapp:'910000000000',email:'hello@axjd.example',photo:'',extra:''
   },
-  theme:{name:'void',accent:'',particles:true,grain:true,cursor:true},
+  theme:{name:'aurora',accent:'',particles:true,grain:true,cursor:true},
   sites:[
     ['Salary System','salary'],['Assembly Attendance','attendance'],['Library','library'],['SADA','sada'],['Mehfil','mehfil'],['Photo Frame','frame'],['SANUSI AI','sanusi'],['Progress Report','report']
   ].map((n,i)=>({id:'s'+(i+1),name:n[0],logo:'',link:'https://'+n[1]+'.example.com',order:i+1})),
@@ -386,7 +386,7 @@ class LetterOrb{
 const ORBS=[];let orbH=null,orbV=null;
 
 /* ═══════════════ background particles ═══════════════ */
-const fx={cv:null,x:null,P:[],w:0,h:0,d:1,skin:'void',
+const fx={cv:null,x:null,P:[],w:0,h:0,d:1,skin:'aurora',
   init(){this.cv=$('#fx');this.x=this.cv.getContext('2d');this.resize();addEventListener('resize',()=>this.resize());},
   resize(){const d=Math.min(devicePixelRatio||1,1.5);this.d=d;this.w=innerWidth;this.h=innerHeight;this.cv.width=Math.round(this.w*d);this.cv.height=Math.round(this.h*d);const n=Math.round(clamp(this.w*this.h/20000,26,78));this.P=Array.from({length:n},()=>this.mk(true));},
   mk(rand){return{x:Math.random()*this.w,y:rand?Math.random()*this.h:this.h+8,r:Math.random()*1.5+.5,v:Math.random()*.22+.05,ph:Math.random()*6.3,dx:(Math.random()-.5)*.1,c:Math.random()};},
@@ -434,7 +434,7 @@ function loop(now){
 
 /* ═══════════════ applying a design ═══════════════ */
 function applyTheme(t){
-  t=t||{};const sk=SKINS.includes(t.name)?t.name:'void',root=document.documentElement;
+  t=t||{};const sk=SKINS.includes(t.name)?t.name:'aurora',root=document.documentElement;
   root.dataset.skin=sk;
   if(/^#[0-9a-f]{6}$/i.test(t.accent||'')){root.style.setProperty('--a1',t.accent);root.style.setProperty('--a1-rgb',parseHex(t.accent).join(','));}
   else{root.style.removeProperty('--a1');root.style.removeProperty('--a1-rgb');}
@@ -1975,13 +1975,6 @@ async function init(){
     document.fonts.ready.then(()=>{gradientLetters();});
   }
 }
-
-/* water-droplet ripple on every tap */
-document.addEventListener('pointerdown',e=>{
-  if(REDUCE)return;
-  const mk=(c)=>{const d=document.createElement('i');d.className='drop '+c;d.style.left=e.clientX+'px';d.style.top=e.clientY+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1100);};
-  mk('');mk('s2');mk('dr');
-},{passive:true});
 
 init();
 })();

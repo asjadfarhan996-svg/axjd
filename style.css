@@ -695,13 +695,8 @@ html[data-skin=void] .card{background-image:none}
 .btn{position:relative;overflow:hidden}
 .btn::after{left:14%;top:10%;width:28%;height:26%}
 .mark{border-radius:50%}
-.drop{position:fixed;left:0;top:0;border-radius:50%;pointer-events:none;z-index:400;
-  border:2px solid rgba(var(--a1-rgb),.75);box-shadow:inset 0 0 12px rgba(255,255,255,.35),0 0 18px rgba(var(--a1-rgb),.35);
-  animation:dropRing .9s cubic-bezier(.2,.7,.2,1) forwards}
-.drop.s2{animation-delay:.12s;border-color:rgba(var(--a2-rgb,var(--a1-rgb)),.5)}
-.drop.dr{width:12px;height:12px;margin:-6px 0 0 -6px;border:0;
-  background:radial-gradient(circle at 32% 30%,#fff 0 14%,rgba(var(--a1-rgb),.55) 40%,rgba(var(--a1-rgb),.15) 80%);
-  animation:dropFall .8s ease-in forwards}
-@keyframes dropRing{from{width:8px;height:8px;margin:-4px 0 0 -4px;opacity:.95}to{width:120px;height:120px;margin:-60px 0 0 -60px;opacity:0}}
-@keyframes dropFall{from{transform:translateY(-6px) scale(1);opacity:1}to{transform:translateY(34px) scale(.5);opacity:0}}
-@media (prefers-reduced-motion:reduce){.drop{display:none}}
+/* transparent glass look */
+html[data-skin]{--card:rgba(255,255,255,.035);--card-hi:rgba(255,255,255,.06);--blur:18px}
+.card,.btn,.chip,.send,.t-go,.tile,.pab,.rbox,.li,.vi,.orb-chips li,.bub,.acard,.in,.composer input,.g-in input{
+  -webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
+.btn:not(.primary):not(.pri){background-color:rgba(255,255,255,.03)}
