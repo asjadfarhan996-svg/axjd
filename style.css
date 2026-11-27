@@ -104,7 +104,7 @@ body.no-cursor .cglow,body.no-cursor .cring{display:none}
 .nav.scrolled{background:color-mix(in srgb,var(--bg) 74%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:var(--line)}
 .nav.hide{transform:translateY(-100%)}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--f-disp);font-weight:800;font-size:23px;letter-spacing:.01em}
-.mark{width:44px;height:44px;object-fit:contain;border-radius:10px;mix-blend-mode:screen;animation:logoSpin 8s linear infinite}
+.mark{width:56px;height:56px;object-fit:contain;animation:logoSpin 8s linear infinite}
 @keyframes logoSpin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.mark{animation:none}}
 .mark-orbit{transform-origin:24px 24px;animation:spin 7s linear infinite}
