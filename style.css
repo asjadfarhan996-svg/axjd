@@ -677,3 +677,31 @@ body:not(.is-owner) .st-app{display:none}
 .st-ref{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .st-ref+.in{margin-top:8px}
 .cn-res.busy{color:var(--a1)}
+
+/* ═══════════════ droplet shapes: 25% and 50% corners, water-drop gloss ═══════════════ */
+:root,html[data-skin]{--r:25%/18%;--r-btn:50%/50%;--cut:0px;--clip:none}
+html[data-skin] .btn,html[data-skin] .card,html[data-skin] .orb-chips li{clip-path:none}
+html[data-skin=void] .card{background-image:none}
+.card,.rbox,.g-steps li,.pab,.li,.vi,.skin,.acard,.tile{border-radius:25%/18%}
+.card,.tile{border-radius:min(25%,44px)}
+.rbox,.g-steps li,.pab,.li,.vi,.skin,.acard,.bub{border-radius:min(25%,26px)}
+.btn,.chip,.links a,.sugg button,.seg,.seg button,.composer input,.g-in input,.send,.tts,.toast,.own-chip,.burger,.in,.orb-chips li,.demo,.demo button{border-radius:50%/50%}
+.btn,.chip,.sugg button,.composer input,.g-in input,.in,.orb-chips li,.own-chip,.toast{border-radius:999px}
+.card,.btn,.chip,.send,.mic,.t-go,.tile,.pab,.rbox,.li,.vi,.orb-chips li{
+  box-shadow:inset 0 2px 5px rgba(255,255,255,.28),inset 0 -6px 12px rgba(var(--a1-rgb),.14),0 10px 26px rgba(0,0,0,.22)}
+.card::after,.btn::after,.tile::after,.pab::after,.rbox::after{
+  content:'';position:absolute;left:9%;top:7%;width:34%;height:14%;border-radius:50%;pointer-events:none;
+  background:radial-gradient(ellipse at 40% 40%,rgba(255,255,255,.55),rgba(255,255,255,0) 70%);transform:rotate(-12deg)}
+.btn{position:relative;overflow:hidden}
+.btn::after{left:14%;top:10%;width:28%;height:26%}
+.mark{border-radius:50%}
+.drop{position:fixed;left:0;top:0;border-radius:50%;pointer-events:none;z-index:400;
+  border:2px solid rgba(var(--a1-rgb),.75);box-shadow:inset 0 0 12px rgba(255,255,255,.35),0 0 18px rgba(var(--a1-rgb),.35);
+  animation:dropRing .9s cubic-bezier(.2,.7,.2,1) forwards}
+.drop.s2{animation-delay:.12s;border-color:rgba(var(--a2-rgb,var(--a1-rgb)),.5)}
+.drop.dr{width:12px;height:12px;margin:-6px 0 0 -6px;border:0;
+  background:radial-gradient(circle at 32% 30%,#fff 0 14%,rgba(var(--a1-rgb),.55) 40%,rgba(var(--a1-rgb),.15) 80%);
+  animation:dropFall .8s ease-in forwards}
+@keyframes dropRing{from{width:8px;height:8px;margin:-4px 0 0 -4px;opacity:.95}to{width:120px;height:120px;margin:-60px 0 0 -60px;opacity:0}}
+@keyframes dropFall{from{transform:translateY(-6px) scale(1);opacity:1}to{transform:translateY(34px) scale(.5);opacity:0}}
+@media (prefers-reduced-motion:reduce){.drop{display:none}}

@@ -1976,5 +1976,12 @@ async function init(){
   }
 }
 
+/* water-droplet ripple on every tap */
+document.addEventListener('pointerdown',e=>{
+  if(REDUCE)return;
+  const mk=(c)=>{const d=document.createElement('i');d.className='drop '+c;d.style.left=e.clientX+'px';d.style.top=e.clientY+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1100);};
+  mk('');mk('s2');mk('dr');
+},{passive:true});
+
 init();
 })();
